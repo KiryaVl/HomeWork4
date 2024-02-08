@@ -13,38 +13,54 @@ import java.util.UUID;
 public class TaskRepository {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final File jsonFile = new File("tasks.json");
+    private List<Task> tasks;
 
-    public List<Task> findAll() {
+    public TaskRepository() {
+        loadTasksFromFile();
+    }
+
+    private void loadTasksFromFile() {
         try {
             if (!jsonFile.exists()) {
-                return new ArrayList<>();
+                tasks = new ArrayList<>();
+            } else {
+                tasks = objectMapper.readValue(jsonFile, new TypeReference<List<Task>>() {});
             }
-            return objectMapper.readValue(jsonFile, new TypeReference<List<Task>>() {});
         } catch (IOException e) {
+            // Обработка ошибок при чтении файла
+            tasks = new ArrayList<>();
             e.printStackTrace();
-            return new ArrayList<>();
         }
     }
 
+    public List<Task> findAll() {
+        return tasks;
+    }
+
     public Task findById(UUID id) {
-        List<Task> tasks = findAll();
         return tasks.stream()
                 .filter(task -> task.getId().equals(id))
                 .findFirst()
                 .orElse(null);
     }
 
-
     public void save(Task task) {
+        tasks.add(task);
+        saveTasksToFile();
+    }
+
+    public void removeTask(Task task) {
+        tasks.remove(task);
+        saveTasksToFile();
+    }
+
+    private void saveTasksToFile() {
         try {
-            List<Task> tasks = findAll();
-            if (tasks == null) {
-                tasks = new ArrayList<>();
-            }
-            tasks.add(task);
             objectMapper.writeValue(jsonFile, tasks);
         } catch (IOException e) {
+            // Обработка ошибок при записи в файл
             e.printStackTrace();
         }
     }
 }
+

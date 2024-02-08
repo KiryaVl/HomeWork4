@@ -23,6 +23,7 @@ public class TaskService {
 
     public void removeTask(UUID taskId) {
         tasks.removeIf(task -> task.getId().equals(taskId));
+        taskRepository.removeTask(getTaskById(taskId));
     }
 
     public List<Task> getTasks() {
@@ -32,9 +33,7 @@ public class TaskService {
     }
 
     public Task getTaskById(UUID taskId) {
-        return tasks.stream()
-                .filter(task -> task.getId().equals(taskId))
-                .findFirst()
-                .orElse(null);
+        return taskRepository.findById(taskId);
     }
+
 }
