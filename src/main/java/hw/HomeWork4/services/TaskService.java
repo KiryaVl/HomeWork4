@@ -2,38 +2,33 @@ package hw.HomeWork4.services;
 
 import hw.HomeWork4.models.Task;
 import hw.HomeWork4.repositorys.TaskRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class TaskService {
 
-    private List<Task> tasks = new ArrayList<>();
-
-    private TaskRepository taskRepository = new TaskRepository();
+    @Autowired
+    private TaskRepository taskRepository;
 
     public void addTask(String taskName, String taskDescription) {
         Task task = new Task(UUID.randomUUID(), taskName, taskDescription);
-        tasks.add(task);
         taskRepository.save(task);
     }
 
     public void removeTask(UUID taskId) {
-        tasks.removeIf(task -> task.getId().equals(taskId));
-        taskRepository.removeTask(getTaskById(taskId));
+        taskRepository.deleteById(taskId);
     }
 
     public List<Task> getTasks() {
-        if (taskRepository.findAll() != null) {
-            return taskRepository.findAll();
-        } return tasks;
+        return taskRepository.findAll();
     }
 
     public Task getTaskById(UUID taskId) {
-        return taskRepository.findById(taskId);
+        return taskRepository.findById(taskId).orElse(null);
     }
-
 }
+

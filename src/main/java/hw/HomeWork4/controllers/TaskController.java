@@ -28,7 +28,7 @@ public class TaskController {
             model.addAttribute("task", task);
             return "taskDetails";
         } else {
-            return "error"; // Предположим, что у нас есть страница ошибки с именем "error.html"
+            return "error";
         }
     }
 
