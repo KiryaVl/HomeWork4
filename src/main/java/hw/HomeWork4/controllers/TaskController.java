@@ -1,52 +1,49 @@
 package hw.HomeWork4.controllers;
 
 import hw.HomeWork4.models.Task;
-import hw.HomeWork4.services.TaskService;
+import hw.HomeWork4.repositorys.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
-@Controller
+@RestController
+@RequestMapping("/api/tasks")
 public class TaskController {
 
     @Autowired
-    private TaskService taskService;
+    private TaskRepository taskRepository;
 
-    @GetMapping("/")
-    public String index(Model model) {
-        model.addAttribute("tasks", taskService.getTasks());
-        return "index";
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Task addTask(@RequestBody Task task) {
+        return taskRepository.save(task);
     }
 
-    @GetMapping("/task/{id}")
-    public String taskDetails(@PathVariable("id") UUID id, Model model) {
-        Task task = taskService.getTaskById(id);
-        if (task != null) {
-            model.addAttribute("task", task);
-            return "taskDetails";
-        } else {
-            return "error";
+    @GetMapping
+    public List<Task> getAllTasks() {
+        return taskRepository.findAll();
+    }
+
+    @GetMapping("/status/{status}")
+    public List<Task> getTasksByStatus(@PathVariable Task.TaskStatus status) {
+        return taskRepository.findByTaskStatus(status);
+    }
+
+    @PutMapping("/{id}")
+    public Task updateTaskStatus(@PathVariable Long id, @RequestBody Task task) {
+        Task existingTask = taskRepository.findById(id).orElse(null);
+        if (existingTask != null) {
+            existingTask.setTaskStatus(task.getTaskStatus());
+            return taskRepository.save(existingTask);
         }
+        return null;
     }
 
-    @GetMapping("/addTask")
-    public String showAddTaskForm(Model model) {
-        model.addAttribute("task", new Task());
-        return "addTaskForm";
-    }
-
-    @PostMapping("/addTask")
-    public String addTask(@ModelAttribute("task") Task task) {
-        taskService.addTask(task.getTaskName(), task.getTaskDescription());
-        return "redirect:/";
-    }
-
-    @PostMapping("/task/{id}/delete")
-    public String deleteTask(@PathVariable("id") UUID id) {
-        taskService.removeTask(id);
-        return "redirect:/";
+    @DeleteMapping("/{id}")
+    public void deleteTask(@PathVariable Long id) {
+        taskRepository.deleteById(id);
     }
 }

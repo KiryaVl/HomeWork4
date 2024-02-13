@@ -14,12 +14,12 @@ public class TaskService {
     @Autowired
     private TaskRepository taskRepository;
 
-    public void addTask(String taskName, String taskDescription) {
-        Task task = new Task(UUID.randomUUID(), taskName, taskDescription);
-        taskRepository.save(task);
+    public Task addTask(String taskName, String taskDescription) {
+        Task task = new Task();
+        return taskRepository.save(task);
     }
 
-    public void removeTask(UUID taskId) {
+    public void removeTask(Long taskId) {
         taskRepository.deleteById(taskId);
     }
 
@@ -27,7 +27,7 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
-    public Task getTaskById(UUID taskId) {
+    public Task getTaskById(Long taskId) {
         return taskRepository.findById(taskId).orElse(null);
     }
 }
