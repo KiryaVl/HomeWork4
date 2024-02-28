@@ -2,6 +2,7 @@ package hw.HomeWork4.controllers;
 
 import hw.HomeWork4.models.Task;
 import hw.HomeWork4.repositorys.TaskRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +11,8 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/tasks")
+@AllArgsConstructor
+@RequestMapping("/tasks")
 public class TaskController {
 
     @Autowired

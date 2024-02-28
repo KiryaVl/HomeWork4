@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
-@Table(name = "Tasks")
+@Table(name = "tasks")
 public class Task {
     public enum TaskStatus {
         NOT_STARTED, IN_PROGRESS, COMPLETED;
